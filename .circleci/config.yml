@@ -1,26 +1,53 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
+
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  create_infrastructure:
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+     - image: amazon/aws-cli
     steps:
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: "Create Cloud Formation stack"
+          command: |
+              aws cloudformation deploy \
+                --template-file template.yml \
+                --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+                --region us-east-1
+  configure_infrastructure:
+    docker:
+     - image: python:3.7-alpine3.11
+    steps:
+     - checkout
+     - add_ssh_keys:
+         fingerprints: ["e4:28:9e:91:60:dd:7f:84:ce:9b:8f:8d:72:6f:82:30"]
+     - run:
+         name: Install ansible 
+         command: |
+            sudo yum install -y ansible
+     - run:
+         name: Create Inventory file
+         command: |
+           echo "[all]" > inventory
 
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+     - run:
+         name: Create Inventory file2
+         command: |
+           aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --output text >> ~/inventory.txt
+
+     - run: 
+         name: Configure server
+         command: | 
+           ansible-playbook -i ~/inventory.txt apache.yml
+      
 workflows:
-  say-hello-workflow:
+  my_workflow:
     jobs:
-      - say-hello
+      - create_infrastructure
+      - configure_infrastructure:
+          requires:
+            - create_infrastructure
+
+# VS Code Extension Version: 1.5.0
