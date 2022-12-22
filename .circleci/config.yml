@@ -25,11 +25,18 @@ jobs:
          name: Install ansible 
          command: |
              apk add --update ansible 
+             
+     - run:
+         name: Install ansible 
+         command: |
+             apk add aws-cli
+   
      - run:
          name: Create Inventory file
          command: |
            echo "[all]" > inventory
 
+    
      - run:
          name: Create Inventory file2
          command: |
