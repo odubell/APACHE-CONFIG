@@ -27,9 +27,9 @@ jobs:
          command: |
            aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --output text >> ~/inventory.txt
+            --output text >> ~/ec2-user/inventory.txt
       - persist_to_workspace:
-          root: ~/.
+          root: ~/ec2-user/*
           paths: 
           - inventory.txt
           
@@ -40,7 +40,7 @@ jobs:
      
      - checkout
      - attach_workspace:
-         at: ~/inventory.txt
+         at: ~/ec2-user/*
      - add_ssh_keys:
          fingerprints: ["e4:28:9e:91:60:dd:7f:84:ce:9b:8f:8d:72:6f:82:30"]
      - run:
