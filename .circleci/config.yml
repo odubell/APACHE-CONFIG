@@ -8,42 +8,46 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install tar utility
+          command: |
+            yum install -y tar gzip
+      - run:
           name: "Create Cloud Formation stack"
           command: |
               aws cloudformation deploy \
                 --template-file template.yml \
                 --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
                 --region us-east-1
+      - run:
+         name: Create Inventory file
+         command: |
+           echo "[all]" > ~/inventory.txt
+      - run:
+         name: Create Inventory file2
+         command: |
+           aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --output text >> ~/inventory.txt
+      - persist_to_workspace:
+          root: ~/.
+          paths: 
+          - inventory.txt
+
+
   configure_infrastructure:
     docker:
      - image: python:3.7-alpine3.11
     steps:
+     
      - checkout
+     - attach_workspace:
+         at: ~/inventory.txt
      - add_ssh_keys:
          fingerprints: ["e4:28:9e:91:60:dd:7f:84:ce:9b:8f:8d:72:6f:82:30"]
      - run:
          name: Install ansible 
          command: |
              apk add --update ansible 
-             
-     - run:
-         name: Install ansible 
-         command: |
-             apk add --update aws-cli
-   
-     - run:
-         name: Create Inventory file
-         command: |
-           echo "[all]" > inventory
-
-    
-     - run:
-         name: Create Inventory file2
-         command: |
-           aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --output text >> ~/inventory.txt
-
      - run: 
          name: Configure server
          command: | 
