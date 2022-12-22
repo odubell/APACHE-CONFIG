@@ -23,6 +23,7 @@ jobs:
          name: Create Inventory file
          command: |
            echo "[all]" > ~/inventory
+           echo "[defaults]\nhost_key_checking = false" > ~/ansible.cfg
       - run:
          name: Create Inventory file2
          command: |
