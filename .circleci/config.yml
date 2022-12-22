@@ -19,10 +19,10 @@ jobs:
                 --template-file template.yml \
                 --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
                 --region us-east-1
-      - run:
-         name: Create Default config
-         command: |
-           echo -e "[defaults]\nhost_key_checking = false" > ~/ansible.cfg
+ #     - run:
+ #        name: Create Default config
+#         command: |
+#           echo -e "[defaults]\nhost_key_checking = false" > ~/ansible.cfg
       - run:
          name: Create Inventory file
          command: |
@@ -37,8 +37,7 @@ jobs:
           root: ~/
           paths: 
           - inventory
-          - ansible.cfg
-          
+       
   configure_infrastructure:
     docker:
      - image: python:3.7-alpine3.11
@@ -47,7 +46,7 @@ jobs:
      - checkout
      - attach_workspace:
          at: ~/
-     - run: cat ~/inventory;cat ~/ansible.cfg
+     - run: cat ~/inventory
      - add_ssh_keys:
          fingerprints: ["e4:28:9e:91:60:dd:7f:84:ce:9b:8f:8d:72:6f:82:30"]
      - run:
