@@ -1,0 +1,23 @@
+---
+# tasks file for apache
+- name: Upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+
+- name: Install httpd
+  yum:
+    name: httpd
+    state: present
+
+- name: Enable and start httpd
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+
+- name: copy file
+  copy:
+    src: files/index.html
+    dest: /var/www/html/index.html
+
