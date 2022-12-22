@@ -16,7 +16,7 @@ jobs:
                 --region us-east-1
   configure_infrastructure:
     docker:
-     - image: redhat/ubi:8.1
+     - image: corpusops/redhat
     steps:
      - checkout
      - add_ssh_keys:
