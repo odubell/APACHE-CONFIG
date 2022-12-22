@@ -14,28 +14,38 @@ jobs:
                 --template-file template.yml \
                 --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
                 --region us-east-1
-  configure_infrastructure:
-    docker:
-     - image: python:3.7-alpine3.11
-    steps:
-     - checkout
-     - add_ssh_keys:
-         fingerprints: ["e4:28:9e:91:60:dd:7f:84:ce:9b:8f:8d:72:6f:82:30"]
-     - run:
-         name: Install ansible 
-         command: |
-            sudo yum install -y ansible
-     - run:
+      - run:
          name: Create Inventory file
          command: |
-           echo "[all]" > inventory
+           echo "[all]" > ~/inventory.txt
 
-     - run:
+      - run:
          name: Create Inventory file2
          command: |
            aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --output text >> ~/inventory.txt
+
+      - persist_to_workspace:
+          root: ~/.
+          paths: 
+          - inventory.txt
+
+
+  configure_infrastructure:
+    docker:
+     - image: python:3.7-alpine3.11
+    steps:
+     
+     - checkout
+     - attach_workspace:
+         at: ~/inventory.txt
+     - add_ssh_keys:
+         fingerprints: ["e4:28:9e:91:60:dd:7f:84:ce:9b:8f:8d:72:6f:82:30"]
+     - run:
+         name: Install ansible 
+         command: |
+             apk add --update ansible 
 
      - run: 
          name: Configure server
