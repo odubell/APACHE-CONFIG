@@ -7,8 +7,6 @@ jobs:
      - image: amazon/aws-cli
     steps:
       - checkout
-      steps:
-      - checkout
       - run:
           name: Install tar utility
           command: |
