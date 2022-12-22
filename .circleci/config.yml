@@ -24,7 +24,7 @@ jobs:
      - run:
          name: Install ansible 
          command: |
-            sudo yum install -y ansible
+             yum install -y ansible
      - run:
          name: Create Inventory file
          command: |
