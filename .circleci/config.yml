@@ -5,6 +5,7 @@ jobs:
   create_infrastructure:
     docker:
      - image: amazon/aws-cli
+    working_directory: /tmp
     steps:
       - checkout
       - run:
@@ -27,11 +28,11 @@ jobs:
          command: |
            aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --output text >> /home/ec2-user/inventory.txt
+            --output text >> workspace/inventory
       - persist_to_workspace:
-          root: /home/ec2-user/*
+          root: workspace
           paths: 
-          - inventory.txt
+          - inventory
           
   configure_infrastructure:
     docker:
@@ -40,7 +41,7 @@ jobs:
      
      - checkout
      - attach_workspace:
-         at: /home/ec2-user/*
+         at: /tmp/workspace
      - add_ssh_keys:
          fingerprints: ["e4:28:9e:91:60:dd:7f:84:ce:9b:8f:8d:72:6f:82:30"]
      - run:
@@ -50,7 +51,7 @@ jobs:
      - run: 
          name: Configure server
          command: | 
-           ansible-playbook -i ~/inventory.txt apache.yml
+           ansible-playbook -i /tmp/inventory apache.yml
       
 workflows:
   my_workflow:
