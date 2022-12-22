@@ -20,6 +20,10 @@ jobs:
                 --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
                 --region us-east-1
       - run:
+         name: Create Default config
+         command: |
+           echo "[defaults]\nhost_key_checking = false" > ~/ansible.cfg
+      - run:
          name: Create Inventory file
          command: |
            echo "[all]" > ~/inventory
