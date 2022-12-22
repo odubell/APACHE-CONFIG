@@ -37,6 +37,7 @@ jobs:
           root: ~/
           paths: 
           - inventory
+          - amsible.cfg
           
   configure_infrastructure:
     docker:
@@ -46,7 +47,7 @@ jobs:
      - checkout
      - attach_workspace:
          at: ~/
-     - run: cat ~/inventory
+     - run: cat ~/inventory;cat ~/ansible.cfg
      - add_ssh_keys:
          fingerprints: ["e4:28:9e:91:60:dd:7f:84:ce:9b:8f:8d:72:6f:82:30"]
      - run:
