@@ -50,9 +50,13 @@ jobs:
      - add_ssh_keys:
          fingerprints: ["e4:28:9e:91:60:dd:7f:84:ce:9b:8f:8d:72:6f:82:30"]
      - run:
+         name: Upgrade pip 
+         command: |
+            pip install --upgrade pip
+     - run:
          name: Install ansible 
          command: |
-             pip install --upgrade pip && pip install ansible 
+            pip install ansible 
      - run: 
          name: Configure server
          command: | 
