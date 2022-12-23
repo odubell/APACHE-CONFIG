@@ -40,7 +40,7 @@ jobs:
        
   configure_infrastructure:
     docker:
-     - image: circleci/python:3.6.2
+     - image: python:3.7-alpine3.11
     steps:
      
      - checkout
@@ -49,14 +49,11 @@ jobs:
      - run: cat ~/inventory
      - add_ssh_keys:
          fingerprints: ["e4:28:9e:91:60:dd:7f:84:ce:9b:8f:8d:72:6f:82:30"]
-     - run:
-         name: Upgrade pip 
-         command: |
-            pip install --upgrade pip
+    
      - run:
          name: Install ansible 
          command: |
-            pip install ansible 
+            apk add --update ansible 
      - run: 
          name: Configure server
          command: | 
