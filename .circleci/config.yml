@@ -48,7 +48,7 @@ jobs:
          at: ~/
      - run: cat ~/inventory
      - add_ssh_keys:
-         fingerprints: ["e4:28:9e:91:60:dd:7f:84:ce:9b:8f:8d:72:6f:82:30"]
+         fingerprints: ["b4:c6:07:7e:c7:ce:b0:66:e1:d8:12:83:0b:1e:79:cb"]
     
      - run:
          name: Install ansible 
