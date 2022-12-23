@@ -59,6 +59,26 @@ jobs:
          name: Configure server
          command: | 
            ansible-playbook -i ~/inventory apache.yml
+
+  smoke_test:
+    docker:
+     - image: alpine:latest
+    steps:
+     - checkout
+     - attach_workspace:
+         at: ~/
+     - run: apk add --update curl
+     - run:
+        name: smoke test
+        command: |
+          URL="cat ~/inventory | grep -v -e 'all' "
+          # Test if website exists
+          if curl -s --head ${URL}:80 
+          then
+            return 0
+          else
+           return 1
+          fi
       
 workflows:
   my_workflow:
@@ -67,5 +87,8 @@ workflows:
       - configure_infrastructure:
           requires:
             - create_infrastructure
+      - smoke_test:
+          requires:
+            - configure_infrastructure
 
 # VS Code Extension Version: 1.5.0
