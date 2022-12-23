@@ -86,7 +86,11 @@ jobs:
           else
            return 1
           fi
-     - destroy_environment
+  destroy:
+     docker:
+       - image: amazon/aws-cli
+     steps:  
+       - destroy_environment
       
 workflows:
   my_workflow:
@@ -98,5 +102,8 @@ workflows:
       - smoke_test:
           requires:
             - configure_infrastructure
+      - destroy:
+          requires:
+            - smoke_test
 
 # VS Code Extension Version: 1.5.0
